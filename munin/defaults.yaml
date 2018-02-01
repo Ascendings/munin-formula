@@ -1,0 +1,22 @@
+munin_master:
+  package: munin
+  config: /etc/munin/munin.conf
+  config_src: salt://munin/files/munin.conf
+  file_user: root
+  file_group: root
+
+munin_node:
+  package: munin-node
+  service: munin-node
+  config: /etc/munin/munin-node.conf
+  config_src: salt://munin/files/munin-node.conf
+  plugin_dir: /etc/munin/plugins
+  plugin_target_dir: /usr/share/munin/plugins
+  file_user: root
+  file_group: root
+
+munin_tls:
+  private_key: /etc/munin/tls/key.pem
+  certificate: /etc/munin/tls/crt.pem
+  ca_certificate: /etc/munin/tls/cacrt.pem
+
