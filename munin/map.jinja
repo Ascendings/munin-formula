@@ -18,7 +18,7 @@
         'config': '/usr/local/etc/munin/munin.conf',
         'file_group': 'wheel',
     },
-}, grain='os_family') %}
+}, grain='os_family', salt['pillar.get']('munin:lookup:munin_master')) %}
 
 {% set munin_node_osmap = salt['grains.filter_by']({
     'Arch': {
@@ -34,7 +34,7 @@
         'plugin_target_dir': '/usr/local/share/munin/plugins',
         'file_group': 'wheel',
     },
-}, grain='os_family') %}
+}, grain='os_family', salt['pillar.get']('munin:lookup:munin_node')) %}
 
 {% set net_ssleay_osmap = salt['grains.filter_by']({
     'Debian': {
@@ -46,7 +46,7 @@
     'Gentoo': {
         'package': 'dev-perl/Net-SSLeay',
     },
-}, grain='os_family') %}
+}, grain='os_family', salt['pillar.get']('munin:lookup:net_ssleay')) %}
 
 {% set munin_tls_osmap = salt['grains.filter_by']({
     'FreeBSD': {
@@ -54,15 +54,10 @@
         'certificate': '/usr/local/etc/munin/tls/crt.pem',
         'ca_certificate': '/usr/local/etc/munin/tls/cacert.pem',
     },
-}, grain='os_family') %}
+}, grain='os_family', salt['pillar.get']('munin:lookup:munin_tls')) %}
 
 {## Merge osmaps into defaults, then marge in pillar ##}
-{% do default_settings.munin_master.update(munin_master_osmap) %}
-{% set munin_master = salt['pillar.get']('munin:lookup:munin_master', default=default_settings.munin_master, merge=True) %}
-{% do default_settings.munin_node.update(munin_node_osmap) %}
-{% set munin_node = salt['pillar.get']('munin:lookup:munin_node', default=default_settings.munin_node, merge=True) %}
-{% do default_settings.net_ssleay.update(net_ssleay_osmap) %}
-{% set net_ssleay = salt['pillar.get']('munin:lookup:munin_ssleay', default=default_settings.net_ssleay, merge=True) %}
-{% do default_settings.munin_tls.update(munin_tls_osmap) %}
-{% set munin_tls = salt['pillar.get']('munin:lookup:munin_tls', default=default_settings.munin_tls, merge=True) %}
-
+{% set munin_master = default_settings.munin_master.update(munin_master_osmap) %}
+{% set munin_node = default_settings.munin_node.update(munin_node_osmap) %}
+{% set net_ssleay = default_settings.net_ssleay.update(net_ssleay_osmap) %}
+{% set munin_tls = default_settings.munin_tls.update(munin_tls_osmap) %}
