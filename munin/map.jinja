@@ -6,8 +6,6 @@
 
 {## Set OS-specific values for each of the states ##}
 {% set munin_master_osmap = salt['grains.filter_by']({
-    'Debian': {},
-    'RedHat': {},
     'Arch': {
         'cron_service': '/etc/systemd/system/munin-cron.service',
         'cron_timer': '/etc/systemd/system/munin-cron.timer',
@@ -23,8 +21,6 @@
 }, grain='os_family') %}
 
 {% set munin_node_osmap = salt['grains.filter_by']({
-    'Debian': {},
-    'RedHat': {},
     'Arch': {
         'plugin_target_dir': '/usr/lib/munin/plugins',
     },
@@ -44,22 +40,15 @@
     'Debian': {
         'package': 'libnet-ssleay-perl',
     },
-    'RedHat': {
-        'package': 'perl-Net-SSLeay',
+    'Arch': {
+        'package': 'perl-net-ssleay',
     },
     'Gentoo': {
         'package': 'dev-perl/Net-SSLeay',
     },
-    'FreeBSD': {
-        'package': 'perl-Net-SSLeay',
-    },
 }, grain='os_family') %}
 
 {% set munin_tls_osmap = salt['grains.filter_by']({
-    'Debian': {},
-    'RedHat': {},
-    'Arch': {},
-    'Gentoo': {},
     'FreeBSD': {
         'private_key': '/usr/local/etc/munin/tls/key.pem',
         'certificate': '/usr/local/etc/munin/tls/crt.pem',

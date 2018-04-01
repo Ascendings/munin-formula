@@ -15,6 +15,9 @@ munin_node:
   file_user: root
   file_group: root
 
+net_ssleay:
+  package: perl-Net-SSLeay
+
 munin_tls:
   private_key: /etc/munin/tls/key.pem
   certificate: /etc/munin/tls/crt.pem
