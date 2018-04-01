@@ -60,7 +60,7 @@
     }, grain='os_family'),
 ) %}
 
-{% set munin_tls_osmap = salt['grains.filter_by']({
+{% set munin_tls_osmap = salt['grains.filter_by'](
     default_settings.munin_tls,
     grain='os_family',
     merge=salt['grains.filter_by']({
@@ -73,7 +73,7 @@
 ) %}
 
 {## Merge default values with pillar values ##}
-{% set munin_master = munin_master_osmap.update(salt['pillar.get']('munin:lookup:munin_master')) %}
-{% set munin_node = munin_node_osmap.update(salt['pillar.get']('munin:lookup:munin_node')) %}
-{% set net_ssleay = net_ssleay_osmap.update(salt['pillar.get']('munin:lookup:net_ssleay')) %}
-{% set munin_tls = munin_tls_osmap.update(salt['pillar.get']('munin:lookup:munin_tls')) %}
+{% set munin_master = munin_master_osmap.update(salt['pillar.get']('munin:lookup:munin_master', {})) %}
+{% set munin_node = munin_node_osmap.update(salt['pillar.get']('munin:lookup:munin_node', {})) %}
+{% set net_ssleay = net_ssleay_osmap.update(salt['pillar.get']('munin:lookup:net_ssleay', {})) %}
+{% set munin_tls = munin_tls_osmap.update(salt['pillar.get']('munin:lookup:munin_tls', {})) %}
