@@ -22,7 +22,7 @@
     },
 }, grain='os_family') %}
 
-{% set munin_node = salt['grains.filter_by']({
+{% set munin_node_osmap = salt['grains.filter_by']({
     'Debian': {},
     'RedHat': {},
     'Arch': {
@@ -40,7 +40,7 @@
     },
 }, grain='os_family') %}
 
-{% set net_ssleay = salt['grains.filter_by']({
+{% set net_ssleay_osmap = salt['grains.filter_by']({
     'Debian': {
         'package': 'libnet-ssleay-perl',
     },
@@ -55,7 +55,7 @@
     },
 }, grain='os_family') %}
 
-{% set munin_tls = salt['grains.filter_by']({
+{% set munin_tls_osmap = salt['grains.filter_by']({
     'Debian': {},
     'RedHat': {},
     'Arch': {},
@@ -72,7 +72,7 @@
 {% set munin_master = salt['pillar.get']('munin:lookup:munin_master', default=default_settings.munin_master, merge=True) %}
 {% do default_settings.munin_node.update(munin_node_osmap) %}
 {% set munin_node = salt['pillar.get']('munin:lookup:munin_node', default=default_settings.munin_node, merge=True) %}
-{% do default_settings.net_ssleay.update(munin_ssleay_osmap) %}
+{% do default_settings.net_ssleay.update(net_ssleay_osmap) %}
 {% set net_ssleay = salt['pillar.get']('munin:lookup:munin_ssleay', default=default_settings.net_ssleay, merge=True) %}
 {% do default_settings.munin_tls.update(munin_tls_osmap) %}
 {% set munin_tls = salt['pillar.get']('munin:lookup:munin_tls', default=default_settings.munin_tls, merge=True) %}
