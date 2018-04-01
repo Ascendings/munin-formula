@@ -5,59 +5,75 @@
 {% import_yaml 'munin/defaults.yaml' as default_settings %}
 
 {## Set OS-specific values for each of the states ##}
-{% set munin_master_osmap = salt['grains.filter_by']({
-    'Arch': {
-        'cron_service': '/etc/systemd/system/munin-cron.service',
-        'cron_timer': '/etc/systemd/system/munin-cron.timer',
-    },
-    'Gentoo': {
-        'package': 'net-analyzer/munin',
-    },
-    'FreeBSD': {
-        'package': 'munin-master',
-        'config': '/usr/local/etc/munin/munin.conf',
-        'file_group': 'wheel',
-    },
-}, grain='os_family', merge=salt['pillar.get']('munin:lookup:munin_master')) %}
+{% set munin_master_osmap = salt['grains.filter_by'](
+    default_settings.munin_master,
+    grain='os_family',
+    merge=salt['grains.filter_by']({
+        'Arch': {
+            'cron_service': '/etc/systemd/system/munin-cron.service',
+            'cron_timer': '/etc/systemd/system/munin-cron.timer',
+        },
+        'Gentoo': {
+            'package': 'net-analyzer/munin',
+        },
+        'FreeBSD': {
+            'package': 'munin-master',
+            'config': '/usr/local/etc/munin/munin.conf',
+            'file_group': 'wheel',
+        },
+    }, grain='os_family'),
+) %}
 
-{% set munin_node_osmap = salt['grains.filter_by']({
-    'Arch': {
-        'plugin_target_dir': '/usr/lib/munin/plugins',
-    },
-    'Gentoo': {
-        'package': 'net-analyzer/munin',
-        'plugin_target_dir': '/usr/libexec/munin/plugins',
-    },
-    'FreeBSD': {
-        'config': '/usr/local/etc/munin/munin-node.conf',
-        'plugin_dir': '/usr/local/etc/munin/plugins',
-        'plugin_target_dir': '/usr/local/share/munin/plugins',
-        'file_group': 'wheel',
-    },
-}, grain='os_family', merge=salt['pillar.get']('munin:lookup:munin_node')) %}
+{% set munin_node_osmap = salt['grains.filter_by'](
+    default_settings.munin_node,
+    grain='os_family',
+    merge=salt['grains.filter_by']({
+        'Arch': {
+            'plugin_target_dir': '/usr/lib/munin/plugins',
+        },
+        'Gentoo': {
+            'package': 'net-analyzer/munin',
+            'plugin_target_dir': '/usr/libexec/munin/plugins',
+        },
+        'FreeBSD': {
+            'config': '/usr/local/etc/munin/munin-node.conf',
+            'plugin_dir': '/usr/local/etc/munin/plugins',
+            'plugin_target_dir': '/usr/local/share/munin/plugins',
+            'file_group': 'wheel',
+        },
+    }, grain='os_family'),
+) %}
 
-{% set net_ssleay_osmap = salt['grains.filter_by']({
-    'Debian': {
-        'package': 'libnet-ssleay-perl',
-    },
-    'Arch': {
-        'package': 'perl-net-ssleay',
-    },
-    'Gentoo': {
-        'package': 'dev-perl/Net-SSLeay',
-    },
-}, grain='os_family', merge=salt['pillar.get']('munin:lookup:net_ssleay')) %}
+{% set net_ssleay_osmap = salt['grains.filter_by'](
+    default_settings.net_ssleay,
+    grain='os_family',
+    merge=salt['grains.filter_by']({
+        'Debian': {
+            'package': 'libnet-ssleay-perl',
+        },
+        'Arch': {
+            'package': 'perl-net-ssleay',
+        },
+        'Gentoo': {
+            'package': 'dev-perl/Net-SSLeay',
+        },
+    }, grain='os_family'),
+) %}
 
 {% set munin_tls_osmap = salt['grains.filter_by']({
-    'FreeBSD': {
-        'private_key': '/usr/local/etc/munin/tls/key.pem',
-        'certificate': '/usr/local/etc/munin/tls/crt.pem',
-        'ca_certificate': '/usr/local/etc/munin/tls/cacert.pem',
-    },
-}, grain='os_family', merge=salt['pillar.get']('munin:lookup:munin_tls')) %}
+    default_settings.munin_tls,
+    grain='os_family',
+    merge=salt['grains.filter_by']({
+        'FreeBSD': {
+            'private_key': '/usr/local/etc/munin/tls/key.pem',
+            'certificate': '/usr/local/etc/munin/tls/crt.pem',
+            'ca_certificate': '/usr/local/etc/munin/tls/cacert.pem',
+        },
+    }, grain='os_family'),
+) %}
 
-{## Merge osmaps into defaults, then marge in pillar ##}
-{% set munin_master = default_settings.munin_master.update(munin_master_osmap) %}
-{% set munin_node = default_settings.munin_node.update(munin_node_osmap) %}
-{% set net_ssleay = default_settings.net_ssleay.update(net_ssleay_osmap) %}
-{% set munin_tls = default_settings.munin_tls.update(munin_tls_osmap) %}
+{## Merge default values with pillar values ##}
+{% set munin_master = munin_master_osmap.update(salt['pillar.get']('munin:lookup:munin_master')) %}
+{% set munin_node = munin_node_osmap.update(salt['pillar.get']('munin:lookup:munin_node')) %}
+{% set net_ssleay = net_ssleay_osmap.update(salt['pillar.get']('munin:lookup:net_ssleay')) %}
+{% set munin_tls = munin_tls_osmap.update(salt['pillar.get']('munin:lookup:munin_tls')) %}
