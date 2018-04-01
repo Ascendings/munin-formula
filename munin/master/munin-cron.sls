@@ -8,16 +8,16 @@ cron_service:
   file.managed:
     - name: {{ munin_master.cron_service }}
     - source: salt://munin/files/Arch/munin-cron.service
-    - user: root
-    - group: root
+    - user: {{ munin_master.file_user }}
+    - group: {{ munin_master.file_group }}
     - mode: 644
 
 cron_timer:
   file.managed:
     - name: {{ munin_master.cron_timer }}
     - source: salt://munin/files/Arch/munin-cron.timer
-    - user: root
-    - group: root
+    - user: {{ munin_master.file_user }}
+    - group: {{ munin_master.file_group }}
     - mode: 644
 
 munin-cron.timer:
