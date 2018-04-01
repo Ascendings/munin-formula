@@ -18,7 +18,7 @@
         'config': '/usr/local/etc/munin/munin.conf',
         'file_group': 'wheel',
     },
-}, grain='os_family', salt['pillar.get']('munin:lookup:munin_master')) %}
+}, grain='os_family', merge=salt['pillar.get']('munin:lookup:munin_master')) %}
 
 {% set munin_node_osmap = salt['grains.filter_by']({
     'Arch': {
@@ -34,7 +34,7 @@
         'plugin_target_dir': '/usr/local/share/munin/plugins',
         'file_group': 'wheel',
     },
-}, grain='os_family', salt['pillar.get']('munin:lookup:munin_node')) %}
+}, grain='os_family', merge=salt['pillar.get']('munin:lookup:munin_node')) %}
 
 {% set net_ssleay_osmap = salt['grains.filter_by']({
     'Debian': {
@@ -46,7 +46,7 @@
     'Gentoo': {
         'package': 'dev-perl/Net-SSLeay',
     },
-}, grain='os_family', salt['pillar.get']('munin:lookup:net_ssleay')) %}
+}, grain='os_family', merge=salt['pillar.get']('munin:lookup:net_ssleay')) %}
 
 {% set munin_tls_osmap = salt['grains.filter_by']({
     'FreeBSD': {
@@ -54,7 +54,7 @@
         'certificate': '/usr/local/etc/munin/tls/crt.pem',
         'ca_certificate': '/usr/local/etc/munin/tls/cacert.pem',
     },
-}, grain='os_family', salt['pillar.get']('munin:lookup:munin_tls')) %}
+}, grain='os_family', merge=salt['pillar.get']('munin:lookup:munin_tls')) %}
 
 {## Merge osmaps into defaults, then marge in pillar ##}
 {% set munin_master = default_settings.munin_master.update(munin_master_osmap) %}
