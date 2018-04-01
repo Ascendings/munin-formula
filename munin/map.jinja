@@ -6,6 +6,8 @@
 
 {## Set OS-specific values for each of the states ##}
 {% set munin_master_osmap = salt['grains.filter_by']({
+    'Debian': {},
+    'RedHat': {},
     'Arch': {
         'cron_service': '/etc/systemd/system/munin-cron.service',
         'cron_timer': '/etc/systemd/system/munin-cron.timer',
@@ -21,6 +23,8 @@
 }, grain='os_family') %}
 
 {% set munin_node = salt['grains.filter_by']({
+    'Debian': {},
+    'RedHat': {},
     'Arch': {
         'plugin_target_dir': '/usr/lib/munin/plugins',
     },
@@ -52,6 +56,10 @@
 }, grain='os_family') %}
 
 {% set munin_tls = salt['grains.filter_by']({
+    'Debian': {},
+    'RedHat': {},
+    'Arch': {},
+    'Gentoo': {},
     'FreeBSD': {
         'private_key': '/usr/local/etc/munin/tls/key.pem',
         'certificate': '/usr/local/etc/munin/tls/crt.pem',
@@ -61,11 +69,11 @@
 
 {## Merge osmaps into defaults, then marge in pillar ##}
 {% do default_settings.munin_master.update(munin_master_osmap) %}
-{% set munin_master = salt['pillar.get']('munin:lookup:munin_master') %}
+{% set munin_master = salt['pillar.get']('munin:lookup:munin_master', default=default_settings.munin_master, merge=True) %}
 {% do default_settings.munin_node.update(munin_node_osmap) %}
-{% set munin_node = salt['pillar.get']('munin:lookup:munin_node') %}
-{% do default_settings.munin_ssleay.update(munin_ssleay_osmap) %}
-{% set munin_ssleay = salt['pillar.get']('munin:lookup:munin_ssleay') %}
+{% set munin_node = salt['pillar.get']('munin:lookup:munin_node', default=default_settings.munin_node, merge=True) %}
+{% do default_settings.net_ssleay.update(munin_ssleay_osmap) %}
+{% set net_ssleay = salt['pillar.get']('munin:lookup:munin_ssleay', default=default_settings.net_ssleay, merge=True) %}
 {% do default_settings.munin_tls.update(munin_tls_osmap) %}
-{% set munin_tls = salt['pillar.get']('munin:lookup:munin_tls') %}
+{% set munin_tls = salt['pillar.get']('munin:lookup:munin_tls', default=default_settings.munin_tls, merge=True) %}
 
