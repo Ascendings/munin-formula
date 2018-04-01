@@ -2,12 +2,12 @@
 # vim: ft=jinja
 
 {## Start with default values from defaults.yaml ##}
-{% import_yaml 'munin/defaults.yaml' as defaults %}
+{% import_yaml 'munin/defaults.yaml' as default_settings %}
 
 {## Set OS-specific values for each of the states ##}
-{% set munin_master_osmap = salt['grains.filter_by'](
-    defaults.munin_master,
-    grain='os_family',
+{% set munin_master = salt['grains.filter_by'](
+    default_settings,
+    base='munin_master',
     merge=salt['grains.filter_by']({
         'Arch': {
             'cron_service': '/etc/systemd/system/munin-cron.service',
@@ -21,12 +21,12 @@
             'config': '/usr/local/etc/munin/munin.conf',
             'file_group': 'wheel',
         },
-    }, grain='os_family'),
+    }, grain='os_family', merge=salt['pillar.get']('munin:lookup:munin_master', {})),
 ) %}
 
-{% set munin_node_osmap = salt['grains.filter_by'](
-    defaults.munin_node,
-    grain='os_family',
+{% set munin_node = salt['grains.filter_by'](
+    default_settings,
+    base='munin_node',
     merge=salt['grains.filter_by']({
         'Arch': {
             'plugin_target_dir': '/usr/lib/munin/plugins',
@@ -41,12 +41,12 @@
             'plugin_target_dir': '/usr/local/share/munin/plugins',
             'file_group': 'wheel',
         },
-    }, grain='os_family'),
+    }, grain='os_family', merge=salt['pillar.get']('munin:lookup:munin_node', {})),
 ) %}
 
-{% set net_ssleay_osmap = salt['grains.filter_by'](
-    defaults.net_ssleay,
-    grain='os_family',
+{% set net_ssleay = salt['grains.filter_by'](
+    default_settings,
+    base='net_ssleay',
     merge=salt['grains.filter_by']({
         'Debian': {
             'package': 'libnet-ssleay-perl',
@@ -57,23 +57,17 @@
         'Gentoo': {
             'package': 'dev-perl/Net-SSLeay',
         },
-    }, grain='os_family'),
+    }, grain='os_family', merge=salt['pillar.get']('munin:lookup:net_ssleay', {})),
 ) %}
 
-{% set munin_tls_osmap = salt['grains.filter_by'](
-    defaults.munin_tls,
-    grain='os_family',
+{% set munin_tls = salt['grains.filter_by'](
+    default_settings,
+    base='munin_tls',
     merge=salt['grains.filter_by']({
         'FreeBSD': {
             'private_key': '/usr/local/etc/munin/tls/key.pem',
             'certificate': '/usr/local/etc/munin/tls/crt.pem',
             'ca_certificate': '/usr/local/etc/munin/tls/cacert.pem',
         },
-    }, grain='os_family'),
+    }, grain='os_family', merge=salt['pillar.get']('munin:lookup:munin_tls', {})),
 ) %}
-
-{## Merge default values with pillar values ##}
-{% set munin_master = munin_master_osmap.update(salt['pillar.get']('munin:lookup:munin_master', {})) %}
-{% set munin_node = munin_node_osmap.update(salt['pillar.get']('munin:lookup:munin_node', {})) %}
-{% set net_ssleay = net_ssleay_osmap.update(salt['pillar.get']('munin:lookup:net_ssleay', {})) %}
-{% set munin_tls = munin_tls_osmap.update(salt['pillar.get']('munin:lookup:munin_tls', {})) %}
