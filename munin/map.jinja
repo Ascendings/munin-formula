@@ -2,11 +2,11 @@
 # vim: ft=jinja
 
 {## Start with default values from defaults.yaml ##}
-{% import_yaml 'munin/defaults.yaml' as default_settings %}
+{% import_yaml 'munin/defaults.yaml' as defaults %}
 
 {## Set OS-specific values for each of the states ##}
 {% set munin_master_osmap = salt['grains.filter_by'](
-    default_settings.munin_master,
+    defaults.munin_master,
     grain='os_family',
     merge=salt['grains.filter_by']({
         'Arch': {
@@ -25,7 +25,7 @@
 ) %}
 
 {% set munin_node_osmap = salt['grains.filter_by'](
-    default_settings.munin_node,
+    defaults.munin_node,
     grain='os_family',
     merge=salt['grains.filter_by']({
         'Arch': {
@@ -45,7 +45,7 @@
 ) %}
 
 {% set net_ssleay_osmap = salt['grains.filter_by'](
-    default_settings.net_ssleay,
+    defaults.net_ssleay,
     grain='os_family',
     merge=salt['grains.filter_by']({
         'Debian': {
@@ -61,7 +61,7 @@
 ) %}
 
 {% set munin_tls_osmap = salt['grains.filter_by'](
-    default_settings.munin_tls,
+    defaults.munin_tls,
     grain='os_family',
     merge=salt['grains.filter_by']({
         'FreeBSD': {
